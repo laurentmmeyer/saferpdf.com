@@ -1,29 +1,14 @@
-# Ghostscript-pdf-compress.wasm
+# SaferPDF.com
 
 ## Context
 
-This project is a demo of another usage of the `gs.wasm` that [@ochachacha](https://github.com/ochachacha) compiled. It takes any PDF and compress it via ghostscript.
+This project is the SPA running under [saferpdf.com](https://saferpdf.com). It is not intended to run in a standalone context; it can be useful to better understand how saferpdf.com works under the hood.
 
-The applied command is:
-
-```
-gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
-```
-
-## Run the project
-
-To run the project, simply do the following steps
-
-```bash
-git clone git@github.com:laurentmmeyer/ghostscript-pdf-compress.wasm.git
-cd ghostscript-pdf-compress.wasm
-yarn
-yarn dev
-```
+To see a "usable" version of the same technology, check out: [github.com:laurentmmeyer/ghostscript-pdf-compress.wasm](https://github.com:laurentmmeyer/ghostscript-pdf-compress.wasm)
 
 ## Demo
 
-[https://laurentmmeyer.github.io/ghostscript-pdf-compress.wasm/](https://laurentmmeyer.github.io/ghostscript-pdf-compress.wasm/)
+[https://saferpdf.com/](https://saferpdf.com/)
 
 ## Blog
 
