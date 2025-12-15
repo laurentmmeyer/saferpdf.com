@@ -85,7 +85,7 @@ function Commercial({ children }) {
                 <br />
                 <br />
                 With our unique SaferPDF Compressor tool, your files never leave
-                your device. The power of the latest technologies will help you
+                your device. The power of the latest web technologies will help you
                 compress all the PDFs you need in your day-to-day.
               </p>
               <h2 className="app-text-center text-blue app-font-bold app-text-2xl app-mb-4 font-raleway">

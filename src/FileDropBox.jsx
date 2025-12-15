@@ -55,6 +55,10 @@ function DropZone({ onLimitReached, user }) {
   const [files, setFiles] = useState([]);
   const [converted, setConverted] = useState([]);
   const [state, setState] = useState("selection");
+  const [quality, setQuality] = useState(() => {
+    const saved = localStorage.getItem("pdfCompressionQuality");
+    return saved || "recommended";
+  });
 
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -71,7 +75,7 @@ function DropZone({ onLimitReached, user }) {
   async function compressPDFs(files) {
     if (files[0]) {
       const { name, url, size, url2 } = files[0];
-      const dataObject = { psDataURL: url };
+      const dataObject = { psDataURL: url, quality };
       const { blob: element, cleanup } = await _GSPS2PDF(dataObject);
       const { pdfURL, size: newSize } = await loadPDFData(element, name);
       let finalUrl = pdfURL;
@@ -117,7 +121,7 @@ function DropZone({ onLimitReached, user }) {
         });
       }
       if (window.gtag) {
-        window.gtag("event", "conversion", { files_count: files.length });
+        window.gtag("event", "conversion", { files_count: files.length, quality });
       }
       setState((_) => "converting");
       compressPDFs(files);
@@ -187,14 +191,38 @@ function DropZone({ onLimitReached, user }) {
         </div>
       )}
       {files.length > 0 && (
-        <button
-          className="app-w-full app-my-5 font-dm app-text-purple-100 app-bg-purple-900 app-text-white app-py-2 app-px-4 app-rounded focus:app-outline-none focus:app-shadow-outline app-transform app-transition app-duration-500 app-ease-out"
-          type="button"
-          disabled={state === "converting"}
-          onClick={launchCompression}
-        >
-          {state === "converting" ? <LoadingButton /> : "Compress 🚀"}
-        </button>
+        <div className="app-flex app-gap-3 app-my-5 app-items-end">
+          <div className="app-flex-1">
+            <label className="app-block app-text-xs font-dm app-text-gray-700 app-mb-1">
+              Quality
+            </label>
+            <select
+              value={quality}
+              onChange={(e) => {
+                const newQuality = e.target.value;
+                setQuality(newQuality);
+                localStorage.setItem("pdfCompressionQuality", newQuality);
+                if (window.gtag) {
+                  window.gtag("event", "quality_selected", { quality: newQuality });
+                }
+              }}
+              disabled={state === "converting"}
+              className="app-w-full app-px-3 app-py-2 font-dm app-text-sm app-border app-border-gray-300 app-rounded focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-900"
+            >
+              <option value="recommended">Recommended</option>
+              <option value="extreme">Extreme</option>
+              <option value="high-quality">High Quality</option>
+            </select>
+          </div>
+          <button
+            className="app-flex-1 font-dm app-text-purple-100 app-bg-purple-900 app-text-white app-py-2 app-px-4 app-rounded focus:app-outline-none focus:app-shadow-outline app-transform app-transition app-duration-500 app-ease-out"
+            type="button"
+            disabled={state === "converting"}
+            onClick={launchCompression}
+          >
+            {state === "converting" ? <LoadingButton /> : "Compress 🚀"}
+          </button>
+        </div>
       )}
       {converted.length > 0 && (
         <>

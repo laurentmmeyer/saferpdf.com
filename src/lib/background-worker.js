@@ -13,6 +13,15 @@ function _GSPS2PDF(dataStruct, responseCallback) {
     console.log("onload");
     // release the URL
     self.URL.revokeObjectURL(dataStruct.psDataURL);
+
+    // Map quality preset to Ghostscript setting
+    var pdfSettings = "/ebook"; // default to recommended
+    if (dataStruct.quality === "extreme") {
+      pdfSettings = "/screen";
+    } else if (dataStruct.quality === "high-quality") {
+      pdfSettings = "/printer";
+    }
+
     //set up EMScripten environment
     Module = {
       preRun: [
@@ -33,7 +42,7 @@ function _GSPS2PDF(dataStruct, responseCallback) {
       arguments: [
         "-sDEVICE=pdfwrite",
         "-dCompatibilityLevel=1.4",
-        "-dPDFSETTINGS=/ebook",
+        "-dPDFSETTINGS=" + pdfSettings,
         "-DNOPAUSE",
         "-dQUIET",
         "-dBATCH",
