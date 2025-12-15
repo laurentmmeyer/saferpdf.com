@@ -9,15 +9,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Define paths
 const buildDir = path.join(__dirname, "dist");
-const targetAssetsDir = "/Users/laurentmeyer/Code/hugoplate/static/assets";
+const targetAssetsDir = "/Users/laurentmeyer/Code/SaferPDF/static/assets";
 const targetContentFile =
-  "/Users/laurentmeyer/Code/hugoplate/themes/hugoplate/layouts/index.html";
+  "/Users/laurentmeyer/Code/SaferPDF/themes/hugoplate/layouts/index.html";
 const targetSuccessFile =
-  "/Users/laurentmeyer/Code/hugoplate/content/english/success/index.md";
+  "/Users/laurentmeyer/Code/SaferPDF/content/english/success/index.md";
 const targetLoginFile =
-  "/Users/laurentmeyer/Code/hugoplate/content/english/login/index.md";
+  "/Users/laurentmeyer/Code/SaferPDF/content/english/login/index.md";
 const targetPricingFile =
-  "/Users/laurentmeyer/Code/hugoplate/content/english/pricing/index.md";
+  "/Users/laurentmeyer/Code/SaferPDF/content/english/pricing/index.md";
 
 // Clean directories
 async function cleanDirectories() {
