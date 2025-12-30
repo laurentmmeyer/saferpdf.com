@@ -1,11 +1,9 @@
 node_modules
 .idea
-.vercel
 dist
-/functions/
+.vercel
+*.log
+Users/
 .firebaserc
-/Users/laurentmeyer/Code/hugoplate
 firebase.json
-firestore-debug.log
-ui-debug.log
-yarn-error.log
+.runtimeconfig.json
