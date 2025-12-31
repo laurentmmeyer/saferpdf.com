@@ -173,15 +173,32 @@ const PleaseAuth = ({ user: firebaseUser }) => {
 const Success = () => {
   const { refreshAuth, loading, user } = useAuth();
 
-  useEffect(() => refreshAuth, []);
+  useEffect(() => {
+    console.log("[Success] Component mounted, calling refreshAuth");
+    refreshAuth();
+  }, []);
 
   if (loading) {
+    console.log("[Success] Still loading user data");
     return (
       <div className="app-flex app-justify-center app-items-center">
         <div className="app-text-lg app-font-semibold">Loading...</div>
       </div>
     );
   }
+
+  console.log("[Success] User data loaded:", {
+    firebaseUser: user?.firebaseUser ? {
+      uid: user.firebaseUser.uid,
+      email: user.firebaseUser.email,
+      isAnonymous: user.firebaseUser.isAnonymous,
+      providerData: user.firebaseUser.providerData?.map(p => ({ providerId: p.providerId }))
+    } : null,
+    firestoreUser: user?.firestoreUser || null,
+    firestoreUserMode: user?.firestoreUser?.mode,
+    firestoreUserProductDescription: user?.firestoreUser?.productDescription
+  });
+
   const unlinkDebug = () => {
     unlink(user.firebaseUser, new GoogleAuthProvider().providerId).then(
       console.log,
@@ -189,6 +206,10 @@ const Success = () => {
   };
 
   if (!user.firestoreUser?.mode) {
+    console.warn("[Success] No mode found in firestoreUser. Customer might not be set up correctly.", {
+      hasFirestoreUser: !!user?.firestoreUser,
+      firestoreUser: user?.firestoreUser
+    });
     return (
       <div className={"app-flex app-flex-col app-gap-3"}>
         <div className="app-text-lg app-font-semibold app-max-w-screen-md app-w-full">
@@ -198,6 +219,8 @@ const Success = () => {
       </div>
     );
   }
+  
+  console.log("[Success] Displaying subscription success for mode:", user.firestoreUser.mode);
 
   return (
     <div className="app-flex app-flex-col app-items-center app-justify-center app-gap-4">
@@ -208,7 +231,13 @@ const Success = () => {
         />
       </div>
       {!user.firebaseUser.providerData.length && (
-        <PleaseAuth user={user.firebaseUser} />
+        <>
+          {console.log("[Success] User is not linked with Google provider, showing auth prompt")}
+          <PleaseAuth user={user.firebaseUser} />
+        </>
+      )}
+      {user.firebaseUser.providerData.length > 0 && (
+        console.log("[Success] User already linked with providers:", user.firebaseUser.providerData.map(p => p.providerId))
       )}
       {/*<div onClick={unlinkDebug}>Unlink</div>*/}
     </div>
