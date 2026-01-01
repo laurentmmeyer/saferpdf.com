@@ -84,6 +84,16 @@ function MergeDropZone({ onLimitReached, user }) {
     });
   };
 
+  const moveFile = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= files.length) return;
+    setFiles((prev) => {
+      const newFiles = [...prev];
+      const [movedFile] = newFiles.splice(fromIndex, 1);
+      newFiles.splice(toIndex, 0, movedFile);
+      return newFiles;
+    });
+  };
+
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
@@ -113,7 +123,7 @@ function MergeDropZone({ onLimitReached, user }) {
       if (!user?.firestoreUser?.mode) {
         await fetch("https://ip-limit.laurent-2b0.workers.dev/", {
           method: "PUT",
-          body: "1",
+          body: String(files.length),
         }).then((e) => {
           if (!e.ok) throw new Error("Rate limit exceeded");
         });
@@ -210,44 +220,59 @@ function MergeDropZone({ onLimitReached, user }) {
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDragEnd={handleDragEnd}
-              className={`app-flex app-flex-row app-items-center app-justify-between font-dm app-rounded app-border-2 app-border-purple-900 app-px-4 app-py-3 app-my-2 ${
+              className={`app-flex app-flex-row app-items-center font-dm app-rounded app-border-2 app-border-purple-900 app-px-3 app-py-2 app-my-2 app-gap-2 ${
                 !isProcessing ? "app-cursor-grab hover:app-bg-purple-50" : ""
               } ${draggedIndex === index ? "app-opacity-50" : ""}`}
             >
-              <div className="app-flex app-items-center app-gap-3">
-                <span className="app-text-purple-900 app-font-bold app-w-6">
-                  {index + 1}
-                </span>
-                <span className="font-dm app-truncate app-flex-1">
-                  {file.name}
-                </span>
-              </div>
-              <div className="app-flex app-items-center app-gap-3 app-shrink-0">
-                <span className="font-dm app-text-sm app-text-gray-600">
-                  {(file.size / 1048576).toFixed(2)} MB
-                </span>
-                {!isProcessing && (
+              <span className="app-text-purple-900 app-font-bold app-w-6 app-shrink-0">
+                {index + 1}
+              </span>
+              <span className="font-dm app-truncate app-min-w-0 app-flex-1">
+                {file.name}
+              </span>
+              <span className="font-dm app-text-sm app-text-gray-600 app-shrink-0">
+                {(file.size / 1048576).toFixed(2)} MB
+              </span>
+              {!isProcessing && (
+                <div className="app-flex app-flex-col app-shrink-0">
                   <button
-                    onClick={() => removeFile(index)}
-                    className="app-text-gray-400 hover:app-text-red-600 app-p-1 app-transition-colors"
-                    aria-label="Remove file"
+                    onClick={() => moveFile(index, index - 1)}
+                    disabled={index === 0}
+                    className={`app-p-0.5 app-transition-colors ${index === 0 ? "app-text-gray-300" : "app-text-gray-500 hover:app-text-purple-900"}`}
+                    aria-label="Move up"
                   >
-                    <svg
-                      className="app-w-5 app-h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
+                    <svg className="app-w-4 app-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
                     </svg>
                   </button>
-                )}
-              </div>
+                  <button
+                    onClick={() => moveFile(index, index + 1)}
+                    disabled={index === files.length - 1}
+                    className={`app-p-0.5 app-transition-colors ${index === files.length - 1 ? "app-text-gray-300" : "app-text-gray-500 hover:app-text-purple-900"}`}
+                    aria-label="Move down"
+                  >
+                    <svg className="app-w-4 app-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+              {!isProcessing && (
+                <button
+                  onClick={() => removeFile(index)}
+                  className="app-text-gray-400 hover:app-text-red-600 app-p-1 app-transition-colors app-shrink-0"
+                  aria-label="Remove file"
+                >
+                  <svg className="app-w-5 app-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
           ))}
         </div>
