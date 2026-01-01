@@ -1,7 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { _GSPS2PDF } from "./lib/worker-init.js";
-import mergePDFs, { loadFileAsArrayBuffer } from "./lib/qpdf-merge.js";
 import LoadingButton from "./LoadingButton.jsx";
 
 const baseStyle = {
@@ -41,6 +39,26 @@ function loadPDFData(blobUrl) {
   });
 }
 
+function _GSMergePDFs(dataStruct) {
+  const worker = new Worker(
+    new URL("./lib/gs-merge-worker.js", import.meta.url),
+    { type: "module" }
+  );
+  worker.postMessage({ data: dataStruct, target: "merge" });
+  return new Promise((resolve) => {
+    const listener = (e) => {
+      resolve({
+        blob: e.data,
+        cleanup: () => {
+          worker.removeEventListener("message", listener);
+          setTimeout(() => worker.terminate(), 0);
+        },
+      });
+    };
+    worker.addEventListener("message", listener);
+  });
+}
+
 function MergeDropZone({ onLimitReached, user }) {
   const [files, setFiles] = useState([]);
   const [result, setResult] = useState(null);
@@ -48,17 +66,14 @@ function MergeDropZone({ onLimitReached, user }) {
   const [compressAfterMerge, setCompressAfterMerge] = useState(true);
   const [draggedIndex, setDraggedIndex] = useState(null);
 
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      const addedFiles = acceptedFiles.map((file) => ({
-        name: file.name,
-        size: file.size,
-        url: window.URL.createObjectURL(file),
-      }));
-      setFiles((prev) => [...prev, ...addedFiles]);
-    },
-    [],
-  );
+  const onDrop = useCallback((acceptedFiles) => {
+    const addedFiles = acceptedFiles.map((file) => ({
+      name: file.name,
+      size: file.size,
+      url: window.URL.createObjectURL(file),
+    }));
+    setFiles((prev) => [...prev, ...addedFiles]);
+  }, []);
 
   const removeFile = (index) => {
     setFiles((prev) => {
@@ -105,47 +120,32 @@ function MergeDropZone({ onLimitReached, user }) {
       }
 
       if (window.gtag) {
-        window.gtag("event", "merge", { files_count: files.length, compress: compressAfterMerge });
+        window.gtag("event", "merge", {
+          files_count: files.length,
+          compress: compressAfterMerge,
+        });
       }
 
       setState("merging");
 
-      const pdfDataArray = await Promise.all(
-        files.map(async (file) => ({
-          name: file.name,
-          data: await loadFileAsArrayBuffer(file.url),
-        }))
-      );
-
-      const mergedBlob = await mergePDFs(pdfDataArray);
-      let finalUrl = window.URL.createObjectURL(mergedBlob);
-      let finalSize = mergedBlob.size;
+      const fileUrls = files.map((f) => f.url);
       const originalTotalSize = files.reduce((sum, f) => sum + f.size, 0);
 
-      if (compressAfterMerge) {
-        setState("compressing");
-        const mergedUrl = window.URL.createObjectURL(mergedBlob);
-        const { blob: compressedBlobUrl, cleanup } = await _GSPS2PDF({
-          psDataURL: mergedUrl,
-          quality: "recommended",
-        });
-        const { pdfURL, size } = await loadPDFData(compressedBlobUrl);
-        
-        if (size < finalSize) {
-          window.URL.revokeObjectURL(finalUrl);
-          finalUrl = pdfURL;
-          finalSize = size;
-        }
-        cleanup();
-      }
+      const { blob: mergedBlobUrl, cleanup } = await _GSMergePDFs({
+        files: fileUrls,
+        compress: compressAfterMerge,
+      });
+
+      const { pdfURL, size } = await loadPDFData(mergedBlobUrl);
+      cleanup();
 
       const firstName = files[0]?.name?.replace(".pdf", "") || "document";
       setResult({
-        pdfURL: finalUrl,
+        pdfURL,
         downloadName: `${firstName}-merged-min.pdf`,
-        size: finalSize,
+        size,
         originalSize: originalTotalSize,
-        reduction: (originalTotalSize - finalSize) / originalTotalSize,
+        reduction: (originalTotalSize - size) / originalTotalSize,
       });
 
       setState("done");
@@ -180,10 +180,10 @@ function MergeDropZone({ onLimitReached, user }) {
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {}),
     }),
-    [isFocused, isDragAccept, isDragReject],
+    [isFocused, isDragAccept, isDragReject]
   );
 
-  const isProcessing = state === "merging" || state === "compressing";
+  const isProcessing = state === "merging";
 
   return (
     <>
@@ -215,8 +215,12 @@ function MergeDropZone({ onLimitReached, user }) {
               } ${draggedIndex === index ? "app-opacity-50" : ""}`}
             >
               <div className="app-flex app-items-center app-gap-3">
-                <span className="app-text-purple-900 app-font-bold app-w-6">{index + 1}</span>
-                <span className="font-dm app-truncate app-flex-1">{file.name}</span>
+                <span className="app-text-purple-900 app-font-bold app-w-6">
+                  {index + 1}
+                </span>
+                <span className="font-dm app-truncate app-flex-1">
+                  {file.name}
+                </span>
               </div>
               <div className="app-flex app-items-center app-gap-3 app-shrink-0">
                 <span className="font-dm app-text-sm app-text-gray-600">
@@ -228,8 +232,18 @@ function MergeDropZone({ onLimitReached, user }) {
                     className="app-text-gray-400 hover:app-text-red-600 app-p-1 app-transition-colors"
                     aria-label="Remove file"
                   >
-                    <svg className="app-w-5 app-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <svg
+                      className="app-w-5 app-h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 )}
@@ -249,7 +263,9 @@ function MergeDropZone({ onLimitReached, user }) {
               disabled={isProcessing}
               className="app-w-4 app-h-4 app-accent-purple-900"
             />
-            <span className="font-dm app-text-sm">Compress after merging</span>
+            <span className="font-dm app-text-sm">
+              Compress while merging (recommended)
+            </span>
           </label>
           <button
             className="app-w-full font-dm app-text-purple-100 app-bg-purple-900 app-text-white app-py-3 app-px-4 app-rounded focus:app-outline-none focus:app-shadow-outline app-transform app-transition app-duration-500 app-ease-out"
@@ -257,13 +273,9 @@ function MergeDropZone({ onLimitReached, user }) {
             disabled={isProcessing}
             onClick={launchMerge}
           >
-            {state === "merging" ? (
+            {isProcessing ? (
               <span className="app-flex app-items-center app-justify-center app-gap-2">
                 <LoadingButton /> Merging...
-              </span>
-            ) : state === "compressing" ? (
-              <span className="app-flex app-items-center app-justify-center app-gap-2">
-                <LoadingButton /> Compressing...
               </span>
             ) : (
               `Merge ${files.length} PDFs`
@@ -285,7 +297,9 @@ function MergeDropZone({ onLimitReached, user }) {
               Merge Complete!
             </h3>
             <div className="app-text-sm app-text-gray-600 app-mb-4 font-dm">
-              <p>Original total: {(result.originalSize / 1048576).toFixed(2)} MB</p>
+              <p>
+                Original total: {(result.originalSize / 1048576).toFixed(2)} MB
+              </p>
               <p>Final size: {(result.size / 1048576).toFixed(2)} MB</p>
               {result.reduction > 0 && (
                 <p className="app-text-green-600 app-font-semibold">

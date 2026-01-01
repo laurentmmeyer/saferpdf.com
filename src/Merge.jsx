@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MergeDropZone from "./MergeDropZone.jsx";
 import "./Commercial.css";
 import useAuth from "./useAuth.jsx";
+import USPS from "./USPS.jsx";
 
 function Merge({ children }) {
   const [pricing, setPricing] = useState(false);
@@ -46,6 +47,7 @@ function Merge({ children }) {
                   Need to compress PDFs instead?
                 </a>
               </div>
+              <USPS />
             </>
           )}
 
