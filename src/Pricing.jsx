@@ -42,18 +42,31 @@ const StripePricingTable = ({
   );
 };
 
+const isLocalhost = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const STRIPE_CONFIG = isLocalhost
+  ? {
+      pricingTableId: "prctbl_1P31VHCxnjVEpDZGumK9rKs5",
+      publishableKey: "pk_test_51OzCTZCxnjVEpDZG3BxYX3vubGYC45uiV57CJXFPiy8u40qUkieV3HqllUt3FooSYkjRW0GjRT2nggyf6DKWDVAg00U8TywKVs",
+    }
+  : {
+      pricingTableId: "prctbl_1PAA26CxnjVEpDZGlbPXFMpV",
+      publishableKey: "pk_live_51OzCTZCxnjVEpDZGwQkgt12R1VAhVCAzA108Qi2CzSyK58ZGRtJKuU7VFmshqv5WDn3Md61nqASitEJO5dLmTNEu00m7ZkSGmT",
+    };
+
 const ConfiguredStripePricing = () => {
   const { user, loading, refreshAuth } = useAuth();
   useEffect(() => refreshAuth, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading state or null if you prefer not to render anything
+    return <div>Loading...</div>;
   }
 
   return (
     <StripePricingTable
-      pricingTableId="prctbl_1PAA26CxnjVEpDZGlbPXFMpV"
-      publishableKey="pk_live_51OzCTZCxnjVEpDZGwQkgt12R1VAhVCAzA108Qi2CzSyK58ZGRtJKuU7VFmshqv5WDn3Md61nqASitEJO5dLmTNEu00m7ZkSGmT"
+      pricingTableId={STRIPE_CONFIG.pricingTableId}
+      publishableKey={STRIPE_CONFIG.publishableKey}
       clientReferenceId={user.firebaseUser.uid}
     />
   );
