@@ -316,37 +316,35 @@ function MergeDropZone({ onLimitReached, user }) {
       )}
 
       {state === "done" && result && (
-        <div className="app-mt-6">
-          <div className="app-bg-green-50 app-border-2 app-border-green-500 app-rounded-lg app-p-6 app-text-center">
-            <h3 className="app-text-xl app-font-bold app-text-green-700 app-mb-4 font-raleway">
-              Merge Complete!
-            </h3>
-            <div className="app-text-sm app-text-gray-600 app-mb-4 font-dm">
-              <p>
-                Original total: {(result.originalSize / 1048576).toFixed(2)} MB
-              </p>
-              <p>Final size: {(result.size / 1048576).toFixed(2)} MB</p>
-              {result.reduction > 0 && (
-                <p className="app-text-green-600 app-font-semibold">
-                  {(result.reduction * 100).toFixed(0)}% smaller
-                </p>
-              )}
+        <div className="app-mt-4">
+          <a
+            className="shrink-0 app-transform app-transition app-duration-500 app-ease-out app-scale-0"
+            style={{ animation: "popIn 0.5s forwards" }}
+            download={result.downloadName}
+            href={result.pdfURL}
+          >
+            <div className="app-flex app-flex-row app-items-center app-justify-between app-my-1 app-p-3 app-border-2 app-border-purple-900 hover:app-bg-white app-rounded-lg">
+              <div className="app-text-sm app-truncate font-dm app-min-w-0 app-flex-1 app-mr-3">
+                {result.downloadName}
+              </div>
+              <div className="app-flex app-flex-row app-min-w-24 app-justify-end app-items-center app-shrink-0">
+                <div className="app-text-xs font-dm app-mr-2 app-text-right">
+                  <div>{(result.size / 1048576).toFixed(2)} MB</div>
+                  {result.reduction > 0 && (
+                    <div>{(result.reduction * 100).toFixed(0)}% less</div>
+                  )}
+                </div>
+                <img className="app-max-h-6 !m-0" src="./cloud.svg" />
+              </div>
             </div>
-            <a
-              download={result.downloadName}
-              href={result.pdfURL}
-              className="app-inline-block app-mb-4 app-bg-purple-900 app-px-6 app-py-3 app-text-white app-rounded-full hover:app-bg-purple-800 app-transition-colors font-dm"
+          </a>
+          <div className="app-mt-4 app-text-center">
+            <button
+              onClick={reset}
+              className="app-text-purple-900 hover:app-underline font-dm"
             >
-              Download {result.downloadName}
-            </a>
-            <div>
-              <button
-                onClick={reset}
-                className="app-text-purple-900 hover:app-underline font-dm"
-              >
-                Merge more files
-              </button>
-            </div>
+              Merge more files
+            </button>
           </div>
         </div>
       )}
