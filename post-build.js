@@ -32,6 +32,10 @@ const targetMergeFile = path.join(
   saferPDFRoot,
   "content/english/merge/index.md"
 );
+const targetMergeLayout = path.join(
+  saferPDFRoot,
+  "themes/hugoplate/layouts/merge/single.html"
+);
 
 // Clean directories
 async function cleanDirectories() {
@@ -122,6 +126,7 @@ title: Login
   await fs.outputFile(targetLoginFile, loginContent, "utf8");
   console.log(`   ✓ Generated: ${targetLoginFile}`);
 
+  // Create merge content file (for SEO metadata)
   const mergeContent = `
 ---
 title: Merge PDFs
@@ -129,14 +134,22 @@ meta_title: SaferPDF - Merge PDFs Online Securely
 description: Combine multiple PDF files into one. Drag and drop to reorder, merge with optional compression. Everything happens locally in your browser.
 image: "/images/saferpdf-thumbnail.png"
 ---
+`;
+  await fs.outputFile(targetMergeFile, mergeContent, "utf8");
+  console.log(`   ✓ Generated: ${targetMergeFile}`);
+
+  // Create merge layout (like homepage - no title rendering)
+  const mergeLayout = `
+{{ define "main" }}
 <script type="module" crossorigin src="/${mergeJSFile}"></script>
 <link rel="stylesheet" href="/${cssFile}">
 <section class="section pt-14">
 <div id="root" class="w-full"></div>
 </section>
-`;
-  await fs.outputFile(targetMergeFile, mergeContent, "utf8");
-  console.log(`   ✓ Generated: ${targetMergeFile}`);
+{{ end }}
+`.trim();
+  await fs.outputFile(targetMergeLayout, mergeLayout, "utf8");
+  console.log(`   ✓ Generated: ${targetMergeLayout}`);
 }
 
 const [pricingJSFile] = glob.sync("assets/pricing.*.js", { cwd: buildDir });
@@ -223,7 +236,11 @@ async function stageGitChanges() {
       },
       {
         cmd: "git add content/english/merge/index.md",
-        desc: "Staging merge page",
+        desc: "Staging merge page content",
+      },
+      {
+        cmd: "git add themes/hugoplate/layouts/merge/single.html",
+        desc: "Staging merge page layout",
       },
     ];
 
@@ -233,7 +250,7 @@ async function stageGitChanges() {
     }
 
     console.log("\n   📊 Git status after staging:");
-    execSync("git status --short static/assets/ themes/hugoplate/layouts/index.html content/english/login/ content/english/pricing/ content/english/success/ content/english/merge/", {
+    execSync("git status --short static/assets/ themes/hugoplate/layouts/index.html themes/hugoplate/layouts/merge/ content/english/login/ content/english/pricing/ content/english/success/ content/english/merge/", {
       cwd: saferPDFRoot,
       stdio: "inherit",
     });
