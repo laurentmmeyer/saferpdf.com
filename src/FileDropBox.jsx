@@ -121,7 +121,7 @@ function DropZone({ onLimitReached, user }) {
         });
       }
       if (window.gtag) {
-        window.gtag("event", "conversion", { files_count: files.length, quality });
+        window.gtag("event", "compress", { files_count: files.length, quality });
       }
       setState((_) => "converting");
       compressPDFs(files);
