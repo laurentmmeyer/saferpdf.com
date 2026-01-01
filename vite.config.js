@@ -12,6 +12,7 @@ export default defineConfig({
         success: "src/main-success.jsx",
         login: "src/main-login.jsx",
         pricing: "src/main-pricing.jsx",
+        merge: "src/main-merge.jsx",
       },
     },
   },

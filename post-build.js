@@ -28,6 +28,10 @@ const targetPricingFile = path.join(
   saferPDFRoot,
   "content/english/pricing/index.md"
 );
+const targetMergeFile = path.join(
+  saferPDFRoot,
+  "content/english/merge/index.md"
+);
 
 // Clean directories
 async function cleanDirectories() {
@@ -61,16 +65,17 @@ async function moveAssets() {
 async function updateAndMoveIndex() {
   console.log("\n📝 Generating Hugo templates...");
 
-  // Find JS and CSS files
   const [jsFile] = glob.sync("assets/index.*.js", { cwd: buildDir });
   const [successJSFile] = glob.sync("assets/success.*.js", { cwd: buildDir });
   const [loginJSFile] = glob.sync("assets/login.*.js", { cwd: buildDir });
+  const [mergeJSFile] = glob.sync("assets/merge.*.js", { cwd: buildDir });
   const [cssFile] = glob.sync("assets/*.css", { cwd: buildDir });
 
   console.log("   📄 Found asset files:");
   console.log(`      - Main app: ${jsFile}`);
   console.log(`      - Success page: ${successJSFile}`);
   console.log(`      - Login page: ${loginJSFile}`);
+  console.log(`      - Merge page: ${mergeJSFile}`);
   console.log(`      - CSS: ${cssFile}`);
 
   // Construct new index.html content
@@ -116,6 +121,22 @@ title: Login
 `;
   await fs.outputFile(targetLoginFile, loginContent, "utf8");
   console.log(`   ✓ Generated: ${targetLoginFile}`);
+
+  const mergeContent = `
+---
+title: Merge PDFs
+meta_title: SaferPDF - Merge PDFs Online Securely
+description: Combine multiple PDF files into one. Drag and drop to reorder, merge with optional compression. Everything happens locally in your browser.
+image: "/images/saferpdf-thumbnail.png"
+---
+<script type="module" crossorigin src="/${mergeJSFile}"></script>
+<link rel="stylesheet" href="/${cssFile}">
+<section class="section pt-14">
+<div id="root" class="w-full"></div>
+</section>
+`;
+  await fs.outputFile(targetMergeFile, mergeContent, "utf8");
+  console.log(`   ✓ Generated: ${targetMergeFile}`);
 }
 
 const [pricingJSFile] = glob.sync("assets/pricing.*.js", { cwd: buildDir });
@@ -200,6 +221,10 @@ async function stageGitChanges() {
         cmd: "git add content/english/success/index.md",
         desc: "Staging success page",
       },
+      {
+        cmd: "git add content/english/merge/index.md",
+        desc: "Staging merge page",
+      },
     ];
 
     for (const { cmd, desc } of gitCommands) {
@@ -207,9 +232,8 @@ async function stageGitChanges() {
       execSync(cmd, { cwd: saferPDFRoot, stdio: "inherit" });
     }
 
-    // Show git status
     console.log("\n   📊 Git status after staging:");
-    execSync("git status --short static/assets/ themes/hugoplate/layouts/index.html content/english/login/ content/english/pricing/ content/english/success/", {
+    execSync("git status --short static/assets/ themes/hugoplate/layouts/index.html content/english/login/ content/english/pricing/ content/english/success/ content/english/merge/", {
       cwd: saferPDFRoot,
       stdio: "inherit",
     });

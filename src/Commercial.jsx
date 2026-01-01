@@ -94,6 +94,14 @@ function Commercial({ children }) {
               <div className="app-w-full app-max-w-md">
                 <DropZone onLimitReached={onLimitReached} user={user} />
               </div>
+              <div className="app-mt-8 app-text-center">
+                <a
+                  href="/merge"
+                  className="app-text-purple-900 hover:app-underline font-dm"
+                >
+                  Need to merge PDFs instead?
+                </a>
+              </div>
               <USPS />
             </>
           )}
