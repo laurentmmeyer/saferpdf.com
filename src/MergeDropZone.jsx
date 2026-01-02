@@ -334,7 +334,7 @@ function MergeDropZone({ onLimitReached, user }) {
                     <div>{(result.reduction * 100).toFixed(0)}% less</div>
                   )}
                 </div>
-                <img className="app-max-h-6 !m-0" src="./cloud.svg" />
+                <img className="app-max-h-6 !m-0" src="/cloud.svg" />
               </div>
             </div>
           </a>
