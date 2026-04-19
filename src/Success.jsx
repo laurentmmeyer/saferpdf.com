@@ -2,18 +2,23 @@ import useAuth from "./useAuth.jsx";
 import { useEffect, useState } from "react";
 import { GoogleAuthProvider, linkWithPopup, unlink } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { Trans, useTranslation } from "react-i18next";
 import "./Commercial.css";
 import { PurpleLink } from "./PurpleLink.jsx";
 
 const SuccessMessage = ({ purchaseType, product }) => {
+  const { t } = useTranslation();
   // Determine the message based on the purchase type
   let message;
   switch (purchaseType) {
     case "subscription":
       message = (
         <span>
-          Congratulations! You've successfully subscribed to the
-          <b>{product} licence</b>
+          <Trans
+            i18nKey="success.subscriptionMessage"
+            values={{ product }}
+            components={{ b: <b /> }}
+          />
         </span>
       );
       break;
@@ -23,18 +28,19 @@ const SuccessMessage = ({ purchaseType, product }) => {
           className={"app-flex app-flex-col app-gap-3 app-text-lg app-w-full"}
         >
           <div>
-            Awesome! You just bought the <b>{product}</b> lifetime license.
+            <Trans
+              i18nKey="success.paymentLine1"
+              values={{ product }}
+              components={{ b: <b /> }}
+            />
           </div>
           <div>
-            You can now compress as many PDF as you like on this page. <br />
+            {t("success.paymentLine2")} <br />
           </div>
-          <PurpleLink link="/" text="Compress PDFs" />
+          <PurpleLink link="/" text={t("success.compressNow")} />
           {product === "Entreprise" && (
             <div>
-              We'll be in touch soon to grant you access to an
-              authentication-free version. <br />
-              Should you require assistance with setting up your infrastructure,
-              please don't hesitate to reach out{" "}
+              {t("success.enterpriseExtra")}{" "}
               <a
                 className={"app-underline"}
                 href={"mailto:contact@saferpdf.com"}
@@ -79,6 +85,7 @@ const SuccessMessage = ({ purchaseType, product }) => {
 };
 
 const PleaseAuth = ({ user: firebaseUser }) => {
+  const { t } = useTranslation();
   const handleLoginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     linkWithPopup(firebaseUser, provider)
@@ -91,10 +98,7 @@ const PleaseAuth = ({ user: firebaseUser }) => {
   return (
     <div className="app-bg-white app-rounded-lg app-p-6 app-shadow-md app-m-2 app-max-w-screen-md app-flex-col app-flex app-gap-3 justify-center app-w-full">
       <div className="app-text-lg">
-        Your subscription details have been stored locally on your computer.
-        However, to ensure your subscription information remains accessible
-        across different computers or browsers, please consider registering your
-        Google account.
+        {t("success.linkAccountMessage")}
       </div>
       <div className={"app-flex app-justify-center"}>
         <button
@@ -152,12 +156,12 @@ const PleaseAuth = ({ user: firebaseUser }) => {
               </g>
             </g>
           </svg>
-          <span className={"app-text-black"}>Continue with Google</span>
+          <span className={"app-text-black"}>{t("common.continueWithGoogle")}</span>
           {/* Consider using a local or hosted image that represents "Sign in with Google" */}
         </button>
       </div>
       <div className="app-text-lg">
-        If you have any problem, please contact{" "}
+        {t("success.contactProblem")}{" "}
         <a className={"app-underline"} href={"mailto:contact@saferpdf.com"}>
           contact@saferpdf.com
         </a>
@@ -221,6 +225,7 @@ const NoSubscription = ({ user, onRestored }) => {
 };
 
 const Success = () => {
+  const { t } = useTranslation();
   const { refreshAuth, loading, user } = useAuth();
 
   useEffect(() => {
@@ -232,7 +237,7 @@ const Success = () => {
     console.log("[Success] Still loading user data");
     return (
       <div className="app-flex app-justify-center app-items-center">
-        <div className="app-text-lg app-font-semibold">Loading...</div>
+        <div className="app-text-lg app-font-semibold">{t("common.loading")}</div>
       </div>
     );
   }

@@ -1,0 +1,70 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "continueWithGoogle": "Continuer avec Google",
+    "removeFile": "Supprimer le fichier"
+  },
+  "compress": {
+    "title": "Réduisez la taille de vos PDF sans jamais compromettre la qualité ni la sécurité",
+    "subtitle": "Dites « bonjour » à la compression PDF sans effort... et « au revoir » aux fichiers trop volumineux, aux longs temps d'attente et aux outils en ligne qui pourraient divulguer vos données à votre insu.",
+    "subtitle2": "Avec notre outil SaferPDF Compressor unique, vos fichiers ne quittent jamais votre appareil. La puissance des dernières technologies web vous aidera à compresser tous les PDF dont vous avez besoin au quotidien.",
+    "tagline": "C'est sûr, c'est rapide et surtout, c'est privé.",
+    "dropzone": "Déposez vos fichiers ici ou cliquez pour les sélectionner",
+    "qualityLabel": "Qualité",
+    "qualityRecommended": "Recommandée",
+    "qualityExtreme": "Extrême",
+    "qualityHighQuality": "Haute qualité",
+    "button": "Compresser 🚀",
+    "lessLabel": "{{percent}} % de moins",
+    "switchToMerge": "Besoin de fusionner des PDF ?"
+  },
+  "merge": {
+    "title": "Fusionnez plusieurs PDF en un seul en toute sécurité dans votre navigateur",
+    "subtitle": "Combinez vos fichiers PDF dans l'ordre de votre choix. Glissez-déposez pour réorganiser, puis fusionnez avec compression optionnelle.",
+    "subtitle2": "Vos fichiers ne quittent jamais votre appareil — tout se passe localement grâce à WebAssembly.",
+    "tagline": "Privé, sécurisé et totalement hors ligne.",
+    "dropzone": "Déposez vos fichiers PDF ici pour les fusionner, ou cliquez pour les sélectionner",
+    "dragHint": "Glissez les fichiers pour les réorganiser. Ils seront fusionnés dans cet ordre :",
+    "compressOption": "Compresser pendant la fusion (recommandé)",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "button": "Fusionner {{count}} PDF",
+    "processingButton": "Fusion en cours...",
+    "atLeast2": "Ajoutez au moins 2 fichiers à fusionner",
+    "mergeMore": "Fusionner plus de fichiers",
+    "switchToCompress": "Besoin de compresser des PDF ?"
+  },
+  "limit": {
+    "message": "Vous adorez notre produit ! Vous ne pouvez pas convertir plus de 10 documents en 24 heures. Pour plus, il vous faut notre version Pro.",
+    "goToPricing": "Voir les tarifs"
+  },
+  "usps": {
+    "heading": "La différence SaferPDF",
+    "easy": "L'interface est ultra simple : glissez, déposez, compressez",
+    "local": "Vos fichiers sont compressés sur votre appareil (et y restent !)",
+    "noLeak": "Vos données ne peuvent pas être divulguées",
+    "lifetime": "Accès à vie à notre outil*",
+    "cta": "Obtenir SaferPDF"
+  },
+  "login": {
+    "checkInbox": "Vérifiez votre boîte mail",
+    "emailSentMessage": "Nous vous avons envoyé un lien de connexion à <strong>{{email}}</strong>. Cliquez dessus depuis cet appareil pour vous connecter.",
+    "spamHint": "Vous ne le voyez pas ? Vérifiez votre dossier spam.",
+    "or": "ou",
+    "emailPlaceholder": "vous@exemple.com",
+    "emailButton": "Recevoir un lien de connexion par email",
+    "sending": "Envoi en cours...",
+    "confirmEmail": "Veuillez confirmer l'adresse email utilisée pour vous connecter :"
+  },
+  "success": {
+    "subscriptionMessage": "Félicitations ! Vous êtes abonné(e) à la <b>licence {{product}}</b>",
+    "paymentLine1": "Génial ! Vous venez d'acheter la licence à vie <b>{{product}}</b>.",
+    "paymentLine2": "Vous pouvez maintenant compresser autant de PDF que vous le souhaitez sur cette page.",
+    "compressNow": "Compresser des PDF",
+    "enterpriseExtra": "Nous vous contacterons bientôt pour vous donner accès à une version sans authentification. Si vous avez besoin d'aide pour configurer votre infrastructure, n'hésitez pas à nous contacter",
+    "noSubscription": "Aucun abonnement trouvé",
+    "goToPricing": "Voir les tarifs",
+    "linkAccountMessage": "Les détails de votre abonnement sont stockés localement sur votre ordinateur. Pour vous assurer qu'ils restent accessibles depuis différents ordinateurs ou navigateurs, pensez à enregistrer votre compte Google.",
+    "contactProblem": "En cas de problème, veuillez contacter"
+  }
+}

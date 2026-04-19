@@ -1,5 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n/index.js";
 import Login from "./Login.jsx";
 
-ReactDOM.createRoot(document.getElementById("root")).render(<Login />);
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <I18nextProvider i18n={i18n}>
+    <Login />
+  </I18nextProvider>
+);

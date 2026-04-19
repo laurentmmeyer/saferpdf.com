@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { PurpleLink } from "./PurpleLink.jsx";
 
 function Check() {
@@ -27,24 +28,19 @@ function USPItem({ text }) {
 }
 
 function USPS() {
+  const { t } = useTranslation();
   return (
     <div className="p-8">
       <div className="app-text-2xl app-font-bold app-text-gray-900 app-mb-4 app-font-raleway">
-        The SaferPDF difference
+        {t("usps.heading")}
       </div>
       <ul className="app-list-none">
-        <USPItem
-          text={"The interface is super easy to use, just drag, drop, compress"}
-        />
-        <USPItem
-          text={
-            "Your files get compressed on your device (and are there to stay!)"
-          }
-        />
-        <USPItem text={"Your data can not get leaked"} />
-        <USPItem text={"You get lifetime access to our tool*"} />
+        <USPItem text={t("usps.easy")} />
+        <USPItem text={t("usps.local")} />
+        <USPItem text={t("usps.noLeak")} />
+        <USPItem text={t("usps.lifetime")} />
         <div className={"app-w-full app-mt-8 app-text-center"}>
-          <PurpleLink link="/pricing" text="Get SaferPDF" />
+          <PurpleLink link="/pricing" text={t("usps.cta")} />
         </div>
       </ul>
     </div>

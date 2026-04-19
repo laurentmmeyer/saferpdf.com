@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 // Assuming MyDropzone is a component you have created or imported
 import DropZone from "./FileDropBox.jsx";
 import "./Commercial.css";
@@ -6,6 +7,7 @@ import useAuth from "./useAuth.jsx";
 import USPS from "./USPS.jsx";
 
 function Commercial({ children }) {
+  const { t } = useTranslation();
   const [pricing, setPricing] = useState(false);
   const { refreshAuth, loading, user } = useAuth();
 
@@ -13,6 +15,12 @@ function Commercial({ children }) {
 
   const hasChildren = React.Children.count(children) > 0;
   const onLimitReached = () => {
+    if (window.gtag) {
+      window.gtag("event", "limit_reached", {
+        stage: "pricing_shown",
+        context: "compress",
+      });
+    }
     setPricing((_) => true);
   };
 
@@ -74,22 +82,16 @@ function Commercial({ children }) {
           {!hasChildren && !loading && (
             <>
               <h1 className="app-text-center text-blue app-font-bold app-text-4xl app-mb-4 font-raleway">
-                Reduce your PDF file size without ever
-                <br />
-                compromising on quality or safety
+                {t("compress.title")}
               </h1>
               <p className="app-max-w-2xl app-text-center app-text-lg app-mb-6 app-font-sans ">
-                Say "hi" to effortless PDF compression... and "bye" to bloated
-                files, long waiting times and online tools that might leak your
-                data without your knowledge.
+                {t("compress.subtitle")}
                 <br />
                 <br />
-                With our unique SaferPDF Compressor tool, your files never leave
-                your device. The power of the latest web technologies will help you
-                compress all the PDFs you need in your day-to-day.
+                {t("compress.subtitle2")}
               </p>
               <h2 className="app-text-center text-blue app-font-bold app-text-2xl app-mb-4 font-raleway">
-                It’s safe, it’s fast & most importantly, it’s private.
+                {t("compress.tagline")}
               </h2>
               <div className="app-w-full app-max-w-md">
                 <DropZone onLimitReached={onLimitReached} user={user} />
@@ -99,14 +101,14 @@ function Commercial({ children }) {
                   href="/merge"
                   className="app-text-purple-900 hover:app-underline font-dm"
                 >
-                  Need to merge PDFs instead?
+                  {t("compress.switchToMerge")}
                 </a>
               </div>
               <USPS />
             </>
           )}
 
-          {loading && <p>Loading...</p>}
+          {loading && <p>{t("common.loading")}</p>}
 
           {!loading && <div className={"app-w-full"}>{children}</div>}
         </div>
@@ -173,8 +175,7 @@ function Commercial({ children }) {
             </div>
             <div className="app-text-center app-p-3 app-flex-auto app-justify-center">
               <p className="font-dm app-text-gray-900 app-text-lg app-leading-relaxed">
-                You're loving our product! You cannot convert more than 10
-                documents in 24 hours. For more, you need our Pro model.
+                {t("limit.message")}
               </p>
             </div>
             <div className="app-p-3 app-mt-2 app-text-center app-space-x-4 md:app-block">
@@ -183,7 +184,7 @@ function Commercial({ children }) {
                 className="app-mb-2 md:app-mb-0 app-bg-purple-900 app-px-5 app-py-2 app-text-sm app-shadow-sm app-font-medium app-tracking-wider app-text-white app-rounded-full hover:app-shadow-lg hover:app-bg-purple-800"
                 role="button"
               >
-                Go to Pricing
+                {t("limit.goToPricing")}
               </a>
             </div>
           </div>

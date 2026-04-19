@@ -1,0 +1,70 @@
+{
+  "common": {
+    "loading": "Wird geladen...",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "removeFile": "Datei entfernen"
+  },
+  "compress": {
+    "title": "Reduzieren Sie Ihre PDF-Größe — ohne Kompromisse bei Qualität oder Sicherheit",
+    "subtitle": "Sagen Sie „Hallo“ zur mühelosen PDF-Komprimierung... und „Tschüss“ zu aufgeblähten Dateien, langen Wartezeiten und Online-Tools, die Ihre Daten unbemerkt weitergeben könnten.",
+    "subtitle2": "Mit unserem einzigartigen SaferPDF-Komprimierungstool verlassen Ihre Dateien nie Ihr Gerät. Die neuesten Web-Technologien helfen Ihnen, alle PDFs für den Alltag zu komprimieren.",
+    "tagline": "Sicher, schnell und vor allem: privat.",
+    "dropzone": "Dateien hier ablegen oder klicken, um sie auszuwählen",
+    "qualityLabel": "Qualität",
+    "qualityRecommended": "Empfohlen",
+    "qualityExtreme": "Extrem",
+    "qualityHighQuality": "Hohe Qualität",
+    "button": "Komprimieren 🚀",
+    "lessLabel": "{{percent}} % weniger",
+    "switchToMerge": "Möchten Sie stattdessen PDFs zusammenführen?"
+  },
+  "merge": {
+    "title": "PDFs sicher in Ihrem Browser zusammenführen",
+    "subtitle": "Kombinieren Sie Ihre PDF-Dateien in beliebiger Reihenfolge. Per Drag & Drop neu anordnen und mit optionaler Komprimierung zusammenführen.",
+    "subtitle2": "Ihre Dateien verlassen nie Ihr Gerät — alles geschieht lokal mit WebAssembly.",
+    "tagline": "Privat, sicher und komplett offline.",
+    "dropzone": "PDF-Dateien zum Zusammenführen hier ablegen oder klicken, um sie auszuwählen",
+    "dragHint": "Dateien per Drag & Drop neu anordnen. Sie werden in dieser Reihenfolge zusammengeführt:",
+    "compressOption": "Beim Zusammenführen komprimieren (empfohlen)",
+    "moveUp": "Nach oben",
+    "moveDown": "Nach unten",
+    "button": "{{count}} PDFs zusammenführen",
+    "processingButton": "Wird zusammengeführt...",
+    "atLeast2": "Mindestens 2 Dateien zum Zusammenführen hinzufügen",
+    "mergeMore": "Weitere Dateien zusammenführen",
+    "switchToCompress": "Möchten Sie stattdessen PDFs komprimieren?"
+  },
+  "limit": {
+    "message": "Sie lieben unser Produkt! Sie können nicht mehr als 10 Dokumente in 24 Stunden konvertieren. Für mehr brauchen Sie unsere Pro-Version.",
+    "goToPricing": "Zu den Preisen"
+  },
+  "usps": {
+    "heading": "Der SaferPDF-Unterschied",
+    "easy": "Die Oberfläche ist kinderleicht: ziehen, ablegen, komprimieren",
+    "local": "Ihre Dateien werden auf Ihrem Gerät komprimiert (und bleiben dort!)",
+    "noLeak": "Ihre Daten können nicht durchsickern",
+    "lifetime": "Lebenslanger Zugriff auf unser Tool*",
+    "cta": "SaferPDF holen"
+  },
+  "login": {
+    "checkInbox": "Prüfen Sie Ihren Posteingang",
+    "emailSentMessage": "Wir haben einen Anmelde-Link an <strong>{{email}}</strong> gesendet. Klicken Sie auf diesem Gerät darauf, um die Anmeldung abzuschließen.",
+    "spamHint": "Nicht gefunden? Bitte prüfen Sie Ihren Spam-Ordner.",
+    "or": "oder",
+    "emailPlaceholder": "ihre@email.de",
+    "emailButton": "Anmelde-Link per E-Mail senden",
+    "sending": "Wird gesendet...",
+    "confirmEmail": "Bitte bestätigen Sie die E-Mail-Adresse, die Sie zur Anmeldung verwendet haben:"
+  },
+  "success": {
+    "subscriptionMessage": "Glückwunsch! Sie haben die <b>{{product}}-Lizenz</b> erfolgreich abonniert",
+    "paymentLine1": "Großartig! Sie haben gerade die lebenslange Lizenz <b>{{product}}</b> gekauft.",
+    "paymentLine2": "Sie können jetzt beliebig viele PDFs auf dieser Seite komprimieren.",
+    "compressNow": "PDFs komprimieren",
+    "enterpriseExtra": "Wir melden uns in Kürze, um Ihnen Zugriff auf eine authentifizierungsfreie Version zu gewähren. Wenn Sie Hilfe beim Einrichten Ihrer Infrastruktur benötigen, kontaktieren Sie uns gerne",
+    "noSubscription": "Kein Abonnement gefunden",
+    "goToPricing": "Zu den Preisen",
+    "linkAccountMessage": "Ihre Abonnementdetails werden lokal auf Ihrem Computer gespeichert. Damit sie auf verschiedenen Computern oder Browsern verfügbar bleiben, sollten Sie Ihr Google-Konto registrieren.",
+    "contactProblem": "Bei Problemen wenden Sie sich bitte an"
+  }
+}

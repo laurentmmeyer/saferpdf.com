@@ -8,11 +8,13 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink,
 } from "firebase/auth";
+import { Trans, useTranslation } from "react-i18next";
 import "./Commercial.css";
 
 const STORED_EMAIL_KEY = "saferpdf_signin_email";
 
 const Login = () => {
+  const { t } = useTranslation();
   const { loading, user } = useAuth();
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -27,9 +29,7 @@ const Login = () => {
     setCompleting(true);
     let storedEmail = window.localStorage.getItem(STORED_EMAIL_KEY);
     if (!storedEmail) {
-      storedEmail = window.prompt(
-        "Please confirm the email you used to sign in:",
-      );
+      storedEmail = window.prompt(t("login.confirmEmail"));
     }
     if (!storedEmail) {
       setCompleting(false);
@@ -72,7 +72,7 @@ const Login = () => {
   };
 
   if (loading || completing) {
-    return "Loading...";
+    return t("common.loading");
   }
   if (user.firebaseUser.providerData.length) {
     window.location.href = "/success";
@@ -82,13 +82,16 @@ const Login = () => {
   if (emailSent) {
     return (
       <div className="app-w-full app-flex app-justify-center app-items-center app-flex-col app-gap-3 app-p-8 app-text-center">
-        <h2 className="app-text-xl app-font-semibold">Check your inbox</h2>
+        <h2 className="app-text-xl app-font-semibold">{t("login.checkInbox")}</h2>
         <p>
-          We've sent a sign-in link to <strong>{email}</strong>. Click it from
-          this device to finish signing in.
+          <Trans
+            i18nKey="login.emailSentMessage"
+            values={{ email }}
+            components={{ strong: <strong /> }}
+          />
         </p>
         <p className="app-text-sm app-text-gray-500">
-          Don't see it? Please check your spam folder.
+          {t("login.spamHint")}
         </p>
       </div>
     );
@@ -145,12 +148,12 @@ const Login = () => {
             </g>
           </g>
         </svg>
-        <span className={"app-text-black"}>Continue with Google</span>
+        <span className={"app-text-black"}>{t("common.continueWithGoogle")}</span>
       </button>
 
       <div className="app-flex app-items-center app-gap-3 app-w-72">
         <div className="app-flex-1 app-h-px app-bg-gray-300"></div>
-        <span className="app-text-sm app-text-gray-500">or</span>
+        <span className="app-text-sm app-text-gray-500">{t("login.or")}</span>
         <div className="app-flex-1 app-h-px app-bg-gray-300"></div>
       </div>
 
@@ -163,7 +166,7 @@ const Login = () => {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
+          placeholder={t("login.emailPlaceholder")}
           className="app-px-4 app-py-2 app-border app-border-gray-300 app-rounded-lg app-text-sm focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-500"
         />
         <button
@@ -171,7 +174,7 @@ const Login = () => {
           disabled={sending || !email}
           className="app-px-5 app-py-2 app-bg-purple-900 app-text-white app-text-sm app-font-medium app-tracking-wider app-rounded-full app-shadow-sm hover:app-shadow-lg hover:app-bg-purple-800 disabled:app-opacity-50 disabled:app-cursor-not-allowed focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-500 focus:app-ring-offset-2"
         >
-          {sending ? "Sending..." : "Email me a sign-in link"}
+          {sending ? t("login.sending") : t("login.emailButton")}
         </button>
       </form>
 

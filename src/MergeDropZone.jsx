@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useTranslation } from "react-i18next";
 import LoadingButton from "./LoadingButton.jsx";
 
 const baseStyle = {
@@ -60,6 +61,7 @@ function _GSMergePDFs(dataStruct) {
 }
 
 function MergeDropZone({ onLimitReached, user }) {
+  const { t } = useTranslation();
   const [files, setFiles] = useState([]);
   const [result, setResult] = useState(null);
   const [state, setState] = useState("selection");
@@ -162,6 +164,12 @@ function MergeDropZone({ onLimitReached, user }) {
     } catch (e) {
       console.error("Merge failed:", e);
       if (e.message === "Rate limit exceeded") {
+        if (window.gtag) {
+          window.gtag("event", "limit_reached", {
+            stage: "hit",
+            context: "merge",
+          });
+        }
         onLimitReached();
       }
       setState("selection");
@@ -202,7 +210,7 @@ function MergeDropZone({ onLimitReached, user }) {
           <div {...getRootProps({ style })}>
             <input {...getInputProps()} />
             <p className="app-py-5 app-my-5">
-              Drop your PDF files here to merge them, or click to select
+              {t("merge.dropzone")}
             </p>
           </div>
         </div>
@@ -211,7 +219,7 @@ function MergeDropZone({ onLimitReached, user }) {
       {files.length > 0 && state !== "done" && (
         <div className="app-mt-4">
           <p className="app-text-sm app-text-gray-600 app-mb-2 font-dm">
-            Drag files to reorder. Files will be merged in this order:
+            {t("merge.dragHint")}
           </p>
           {files.map((file, index) => (
             <div
@@ -239,7 +247,7 @@ function MergeDropZone({ onLimitReached, user }) {
                     onClick={() => moveFile(index, index - 1)}
                     disabled={index === 0}
                     className={`app-p-0.5 app-transition-colors ${index === 0 ? "app-text-gray-300" : "app-text-gray-500 hover:app-text-purple-900"}`}
-                    aria-label="Move up"
+                    aria-label={t("merge.moveUp")}
                   >
                     <svg className="app-w-4 app-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
@@ -249,7 +257,7 @@ function MergeDropZone({ onLimitReached, user }) {
                     onClick={() => moveFile(index, index + 1)}
                     disabled={index === files.length - 1}
                     className={`app-p-0.5 app-transition-colors ${index === files.length - 1 ? "app-text-gray-300" : "app-text-gray-500 hover:app-text-purple-900"}`}
-                    aria-label="Move down"
+                    aria-label={t("merge.moveDown")}
                   >
                     <svg className="app-w-4 app-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -261,7 +269,7 @@ function MergeDropZone({ onLimitReached, user }) {
                 <button
                   onClick={() => removeFile(index)}
                   className="app-text-gray-400 hover:app-text-red-600 app-p-1 app-transition-colors app-shrink-0"
-                  aria-label="Remove file"
+                  aria-label={t("common.removeFile")}
                 >
                   <svg className="app-w-5 app-h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -289,7 +297,7 @@ function MergeDropZone({ onLimitReached, user }) {
               className="app-w-4 app-h-4 app-accent-purple-900"
             />
             <span className="font-dm app-text-sm">
-              Compress while merging (recommended)
+              {t("merge.compressOption")}
             </span>
           </label>
           <button
@@ -300,10 +308,10 @@ function MergeDropZone({ onLimitReached, user }) {
           >
             {isProcessing ? (
               <span className="app-flex app-items-center app-justify-center app-gap-2">
-                <LoadingButton /> Merging...
+                <LoadingButton /> {t("merge.processingButton")}
               </span>
             ) : (
-              `Merge ${files.length} PDFs`
+              t("merge.button", { count: files.length })
             )}
           </button>
         </div>
@@ -311,7 +319,7 @@ function MergeDropZone({ onLimitReached, user }) {
 
       {files.length === 1 && state === "selection" && (
         <p className="app-text-sm app-text-gray-500 app-mt-4 font-dm app-text-center">
-          Add at least 2 files to merge
+          {t("merge.atLeast2")}
         </p>
       )}
 
@@ -331,7 +339,7 @@ function MergeDropZone({ onLimitReached, user }) {
                 <div className="app-text-xs font-dm app-mr-2 app-text-right">
                   <div>{(result.size / 1048576).toFixed(2)} MB</div>
                   {result.reduction > 0 && (
-                    <div>{(result.reduction * 100).toFixed(0)}% less</div>
+                    <div>{t("compress.lessLabel", { percent: (result.reduction * 100).toFixed(0) })}</div>
                   )}
                 </div>
                 <img className="app-max-h-6 !m-0" src="/cloud.svg" />
@@ -343,7 +351,7 @@ function MergeDropZone({ onLimitReached, user }) {
               onClick={reset}
               className="app-text-purple-900 hover:app-underline font-dm"
             >
-              Merge more files
+              {t("merge.mergeMore")}
             </button>
           </div>
         </div>

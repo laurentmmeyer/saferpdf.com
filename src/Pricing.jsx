@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import useAuth from "./useAuth.jsx";
 
 const StripePricingTable = ({
@@ -56,11 +57,12 @@ const STRIPE_CONFIG = isLocalhost
     };
 
 const ConfiguredStripePricing = () => {
+  const { t } = useTranslation();
   const { user, loading, refreshAuth } = useAuth();
   useEffect(() => refreshAuth, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (

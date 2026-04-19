@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import MergeDropZone from "./MergeDropZone.jsx";
 import "./Commercial.css";
 import useAuth from "./useAuth.jsx";
 import USPS from "./USPS.jsx";
 
 function Merge({ children }) {
+  const { t } = useTranslation();
   const [pricing, setPricing] = useState(false);
   const { refreshAuth, loading, user } = useAuth();
 
   useEffect(() => refreshAuth, []);
 
   const hasChildren = React.Children.count(children) > 0;
-  const onLimitReached = () => setPricing(true);
+  const onLimitReached = () => {
+    if (window.gtag) {
+      window.gtag("event", "limit_reached", {
+        stage: "pricing_shown",
+        context: "merge",
+      });
+    }
+    setPricing(true);
+  };
   const onClose = () => setPricing(false);
 
   return (
@@ -21,20 +31,16 @@ function Merge({ children }) {
           {!hasChildren && !loading && (
             <>
               <h1 className="app-text-center text-blue app-font-bold app-text-4xl app-mb-4 font-raleway">
-                Merge multiple PDFs into one
-                <br />
-                securely in your browser
+                {t("merge.title")}
               </h1>
               <p className="app-max-w-2xl app-text-center app-text-lg app-mb-6 app-font-sans">
-                Combine your PDF files in any order you want. Drag and drop to
-                reorder, then merge with optional compression.
+                {t("merge.subtitle")}
                 <br />
                 <br />
-                Your files never leave your device - everything happens locally
-                using WebAssembly technology.
+                {t("merge.subtitle2")}
               </p>
               <h2 className="app-text-center text-blue app-font-bold app-text-2xl app-mb-4 font-raleway">
-                Private, secure & completely offline.
+                {t("merge.tagline")}
               </h2>
               <div className="app-w-full app-max-w-md">
                 <MergeDropZone onLimitReached={onLimitReached} user={user} />
@@ -44,14 +50,14 @@ function Merge({ children }) {
                   href="/"
                   className="app-text-purple-900 hover:app-underline font-dm"
                 >
-                  Need to compress PDFs instead?
+                  {t("merge.switchToCompress")}
                 </a>
               </div>
               <USPS />
             </>
           )}
 
-          {loading && <p>Loading...</p>}
+          {loading && <p>{t("common.loading")}</p>}
 
           {!loading && <div className="app-w-full">{children}</div>}
         </div>
@@ -77,8 +83,7 @@ function Merge({ children }) {
             </div>
             <div className="app-text-center app-p-3 app-flex-auto app-justify-center">
               <p className="font-dm app-text-gray-900 app-text-lg app-leading-relaxed">
-                You're loving our product! You cannot convert more than 10
-                documents in 24 hours. For more, you need our Pro model.
+                {t("limit.message")}
               </p>
             </div>
             <div className="app-p-3 app-mt-2 app-text-center app-space-x-4 md:app-block">
@@ -87,7 +92,7 @@ function Merge({ children }) {
                 className="app-mb-2 md:app-mb-0 app-bg-purple-900 app-px-5 app-py-2 app-text-sm app-shadow-sm app-font-medium app-tracking-wider app-text-white app-rounded-full hover:app-shadow-lg hover:app-bg-purple-800"
                 role="button"
               >
-                Go to Pricing
+                {t("limit.goToPricing")}
               </a>
             </div>
           </div>

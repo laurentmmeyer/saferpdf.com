@@ -1,0 +1,70 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "continueWithGoogle": "Continue with Google",
+    "removeFile": "Remove file"
+  },
+  "compress": {
+    "title": "Reduce your PDF file size without ever compromising on quality or safety",
+    "subtitle": "Say \"hi\" to effortless PDF compression... and \"bye\" to bloated files, long waiting times and online tools that might leak your data without your knowledge.",
+    "subtitle2": "With our unique SaferPDF Compressor tool, your files never leave your device. The power of the latest web technologies will help you compress all the PDFs you need in your day-to-day.",
+    "tagline": "It's safe, it's fast & most importantly, it's private.",
+    "dropzone": "Drop your files here, or click to select files",
+    "qualityLabel": "Quality",
+    "qualityRecommended": "Recommended",
+    "qualityExtreme": "Extreme",
+    "qualityHighQuality": "High Quality",
+    "button": "Compress 🚀",
+    "lessLabel": "{{percent}}% less",
+    "switchToMerge": "Need to merge PDFs instead?"
+  },
+  "merge": {
+    "title": "Merge multiple PDFs into one securely in your browser",
+    "subtitle": "Combine your PDF files in any order you want. Drag and drop to reorder, then merge with optional compression.",
+    "subtitle2": "Your files never leave your device - everything happens locally using WebAssembly technology.",
+    "tagline": "Private, secure & completely offline.",
+    "dropzone": "Drop your PDF files here to merge them, or click to select",
+    "dragHint": "Drag files to reorder. Files will be merged in this order:",
+    "compressOption": "Compress while merging (recommended)",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "button": "Merge {{count}} PDFs",
+    "processingButton": "Merging...",
+    "atLeast2": "Add at least 2 files to merge",
+    "mergeMore": "Merge more files",
+    "switchToCompress": "Need to compress PDFs instead?"
+  },
+  "limit": {
+    "message": "You're loving our product! You cannot convert more than 10 documents in 24 hours. For more, you need our Pro model.",
+    "goToPricing": "Go to Pricing"
+  },
+  "usps": {
+    "heading": "The SaferPDF difference",
+    "easy": "The interface is super easy to use, just drag, drop, compress",
+    "local": "Your files get compressed on your device (and are there to stay!)",
+    "noLeak": "Your data can not get leaked",
+    "lifetime": "You get lifetime access to our tool*",
+    "cta": "Get SaferPDF"
+  },
+  "login": {
+    "checkInbox": "Check your inbox",
+    "emailSentMessage": "We've sent a sign-in link to <strong>{{email}}</strong>. Click it from this device to finish signing in.",
+    "spamHint": "Don't see it? Please check your spam folder.",
+    "or": "or",
+    "emailPlaceholder": "you@example.com",
+    "emailButton": "Email me a sign-in link",
+    "sending": "Sending...",
+    "confirmEmail": "Please confirm the email you used to sign in:"
+  },
+  "success": {
+    "subscriptionMessage": "Congratulations! You've successfully subscribed to the <b>{{product}} licence</b>",
+    "paymentLine1": "Awesome! You just bought the <b>{{product}}</b> lifetime license.",
+    "paymentLine2": "You can now compress as many PDF as you like on this page.",
+    "compressNow": "Compress PDFs",
+    "enterpriseExtra": "We'll be in touch soon to grant you access to an authentication-free version. Should you require assistance with setting up your infrastructure, please don't hesitate to reach out",
+    "noSubscription": "No subscription found",
+    "goToPricing": "Go to pricing",
+    "linkAccountMessage": "Your subscription details have been stored locally on your computer. However, to ensure your subscription information remains accessible across different computers or browsers, please consider registering your Google account.",
+    "contactProblem": "If you have any problem, please contact"
+  }
+}

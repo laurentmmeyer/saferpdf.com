@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useTranslation } from "react-i18next";
 import { _GSPS2PDF } from "./lib/worker-init.js";
 import LoadingButton from "./LoadingButton.jsx";
 import initQPDF from "./lib/qpdf-init.js";
@@ -52,6 +53,7 @@ function loadPDFData(response, filename) {
 const minFilename = (filename) => filename.replace(".pdf", "-min.pdf");
 
 function DropZone({ onLimitReached, user }) {
+  const { t } = useTranslation();
   const [files, setFiles] = useState([]);
   const [converted, setConverted] = useState([]);
   const [state, setState] = useState("selection");
@@ -126,6 +128,12 @@ function DropZone({ onLimitReached, user }) {
       setState((_) => "converting");
       compressPDFs(files);
     } catch (e) {
+      if (window.gtag) {
+        window.gtag("event", "limit_reached", {
+          stage: "hit",
+          context: "compress",
+        });
+      }
       onLimitReached();
     }
   }
@@ -152,7 +160,7 @@ function DropZone({ onLimitReached, user }) {
         <div {...getRootProps({ style })}>
           <input {...getInputProps()} />
           <p className={"app-py-5 app-my-5"}>
-            Drop your files here, or click to select files
+            {t("compress.dropzone")}
           </p>
         </div>
       </div>
@@ -173,7 +181,7 @@ function DropZone({ onLimitReached, user }) {
                     setFiles((files) => files.filter((e, i) => i !== index))
                   }
                   className="app-text-gray-400 hover:app-text-red-600 app-p-1 app-transition-colors"
-                  aria-label="Remove file"
+                  aria-label={t("common.removeFile")}
                 >
                   <svg
                     className="app-w-5 app-h-5"
@@ -199,7 +207,7 @@ function DropZone({ onLimitReached, user }) {
         <div className="app-flex app-gap-3 app-my-5 app-items-end">
           <div className="app-flex-1">
             <label className="app-block app-text-xs font-dm app-text-gray-700 app-mb-1">
-              Quality
+              {t("compress.qualityLabel")}
             </label>
             <select
               value={quality}
@@ -214,9 +222,9 @@ function DropZone({ onLimitReached, user }) {
               disabled={state === "converting"}
               className="app-w-full app-px-3 app-py-2 font-dm app-text-sm app-border app-border-gray-300 app-rounded focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-900"
             >
-              <option value="recommended">Recommended</option>
-              <option value="extreme">Extreme</option>
-              <option value="high-quality">High Quality</option>
+              <option value="recommended">{t("compress.qualityRecommended")}</option>
+              <option value="extreme">{t("compress.qualityExtreme")}</option>
+              <option value="high-quality">{t("compress.qualityHighQuality")}</option>
             </select>
           </div>
           <button
@@ -225,7 +233,7 @@ function DropZone({ onLimitReached, user }) {
             disabled={state === "converting"}
             onClick={launchCompression}
           >
-            {state === "converting" ? <LoadingButton /> : "Compress 🚀"}
+            {state === "converting" ? <LoadingButton /> : t("compress.button")}
           </button>
         </div>
       )}
@@ -250,7 +258,7 @@ function DropZone({ onLimitReached, user }) {
                 >
                   <div className="app-text-xs font-dm app-mr-2">
                     <div>{(file.newSize / 1048576).toFixed(2)} MB</div>
-                    <div>{(file.reduction * 100).toFixed(0)}% less</div>
+                    <div>{t("compress.lessLabel", { percent: (file.reduction * 100).toFixed(0) })}</div>
                   </div>
                   <img className="app-max-h-6 !m-0" src="./cloud.svg" />
                 </div>
