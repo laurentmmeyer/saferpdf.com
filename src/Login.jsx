@@ -166,7 +166,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={sending || !email}
-          className="app-px-6 app-py-2 app-bg-purple-600 app-text-white app-text-sm app-font-medium app-rounded-lg app-shadow-md hover:app-bg-purple-700 disabled:app-opacity-50 disabled:app-cursor-not-allowed focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-500 focus:app-ring-offset-2"
+          className="app-px-5 app-py-2 app-bg-purple-900 app-text-white app-text-sm app-font-medium app-tracking-wider app-rounded-full app-shadow-sm hover:app-shadow-lg hover:app-bg-purple-800 disabled:app-opacity-50 disabled:app-cursor-not-allowed focus:app-outline-none focus:app-ring-2 focus:app-ring-purple-500 focus:app-ring-offset-2"
         >
           {sending ? "Sending..." : "Email me a sign-in link"}
         </button>
