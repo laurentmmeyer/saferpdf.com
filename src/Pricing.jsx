@@ -6,6 +6,7 @@ const StripePricingTable = ({
   pricingTableId,
   publishableKey,
   clientReferenceId,
+  locale,
 }) => {
   const pricingTableRef = useRef(null); // Reference to the container where the pricing table will be injected
 
@@ -38,6 +39,7 @@ const StripePricingTable = ({
         pricing-table-id={pricingTableId}
         publishable-key={publishableKey}
         client-reference-id={clientReferenceId}
+        locale={locale}
       ></stripe-pricing-table>
     </div>
   );
@@ -48,16 +50,22 @@ const isLocalhost = typeof window !== 'undefined' &&
 
 const STRIPE_CONFIG = isLocalhost
   ? {
-      pricingTableId: "prctbl_1P31VHCxnjVEpDZGumK9rKs5",
+      pricingTableIds: {
+        en: "prctbl_1P31VHCxnjVEpDZGumK9rKs5",
+      },
       publishableKey: "pk_test_51OzCTZCxnjVEpDZG3BxYX3vubGYC45uiV57CJXFPiy8u40qUkieV3HqllUt3FooSYkjRW0GjRT2nggyf6DKWDVAg00U8TywKVs",
     }
   : {
-      pricingTableId: "prctbl_1PAA26CxnjVEpDZGlbPXFMpV",
+      pricingTableIds: {
+        en: "prctbl_1PAA26CxnjVEpDZGlbPXFMpV",
+        fr: "prctbl_1TO0f9CxnjVEpDZGAlLyW27d",
+        de: "prctbl_1TO0ViCxnjVEpDZGHwXpIxIg",
+      },
       publishableKey: "pk_live_51OzCTZCxnjVEpDZGwQkgt12R1VAhVCAzA108Qi2CzSyK58ZGRtJKuU7VFmshqv5WDn3Md61nqASitEJO5dLmTNEu00m7ZkSGmT",
     };
 
 const ConfiguredStripePricing = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, loading, refreshAuth } = useAuth();
   useEffect(() => refreshAuth, []);
 
@@ -65,11 +73,16 @@ const ConfiguredStripePricing = () => {
     return <div>{t("common.loading")}</div>;
   }
 
+  const locale = i18n.resolvedLanguage?.split("-")[0] || "en";
+  const pricingTableId =
+    STRIPE_CONFIG.pricingTableIds[locale] || STRIPE_CONFIG.pricingTableIds.en;
+
   return (
     <StripePricingTable
-      pricingTableId={STRIPE_CONFIG.pricingTableId}
+      pricingTableId={pricingTableId}
       publishableKey={STRIPE_CONFIG.publishableKey}
       clientReferenceId={user.firebaseUser.uid}
+      locale={locale}
     />
   );
 };
