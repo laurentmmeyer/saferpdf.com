@@ -191,13 +191,8 @@ export const restoreSubscription = onCall(
       );
     }
 
-    // Reject ambiguous cases — should never happen with a valid Stripe setup.
     if (snapshot.size > 1) {
-      console.error(`restoreSubscription: multiple records for ${callerEmail}`);
-      throw new HttpsError(
-        "internal",
-        "Multiple records found. Please contact support.",
-      );
+      console.warn(`restoreSubscription: multiple records for ${callerEmail}, using first`);
     }
 
     const sourceDoc = snapshot.docs[0];
