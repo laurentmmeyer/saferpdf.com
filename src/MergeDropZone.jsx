@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "./LoadingButton.jsx";
+import { trackLimitReached } from "./lib/analytics.js";
 
 const baseStyle = {
   flex: 1,
@@ -164,12 +165,7 @@ function MergeDropZone({ onLimitReached, user }) {
     } catch (e) {
       console.error("Merge failed:", e);
       if (e.message === "Rate limit exceeded") {
-        if (window.gtag) {
-          window.gtag("event", "limit_reached", {
-            stage: "hit",
-            context: "merge",
-          });
-        }
+        trackLimitReached("hit", "merge");
         onLimitReached();
       }
       setState("selection");

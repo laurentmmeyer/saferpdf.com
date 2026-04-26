@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { _GSPS2PDF } from "./lib/worker-init.js";
 import LoadingButton from "./LoadingButton.jsx";
 import initQPDF from "./lib/qpdf-init.js";
+import { trackLimitReached } from "./lib/analytics.js";
 
 const baseStyle = {
   flex: 1,
@@ -128,12 +129,7 @@ function DropZone({ onLimitReached, user }) {
       setState((_) => "converting");
       compressPDFs(files);
     } catch (e) {
-      if (window.gtag) {
-        window.gtag("event", "limit_reached", {
-          stage: "hit",
-          context: "compress",
-        });
-      }
+      trackLimitReached("hit", "compress");
       onLimitReached();
     }
   }
