@@ -1,6 +1,7 @@
 import useAuth from "./useAuth.jsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GoogleAuthProvider, linkWithPopup, unlink } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import "./Commercial.css";
 import { PurpleLink } from "./PurpleLink.jsx";
 
@@ -165,6 +166,60 @@ const PleaseAuth = ({ user: firebaseUser }) => {
   );
 };
 
+const NoSubscription = ({ user, onRestored }) => {
+  const [status, setStatus] = useState("idle"); // idle | loading | done | error
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const email = user?.firebaseUser?.email;
+
+  const handleRestore = async () => {
+    if (!email) return;
+    setStatus("loading");
+    setErrorMsg("");
+    try {
+      const restoreSubscription = httpsCallable(
+        getFunctions(),
+        "restoreSubscription",
+      );
+      await restoreSubscription();
+      setStatus("done");
+      onRestored();
+    } catch (err) {
+      setErrorMsg(err.message || "Something went wrong.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="app-flex app-flex-col app-gap-4 app-max-w-screen-md app-w-full">
+      <div className="app-text-lg app-font-semibold">No subscription found</div>
+      {email && (
+        <div className="app-flex app-flex-col app-gap-2">
+          <p className="app-text-sm app-text-gray-600">
+            Purchased with a different account? We'll look for a subscription
+            linked to <strong>{email}</strong> and restore it here.
+          </p>
+          <button
+            onClick={handleRestore}
+            disabled={status === "loading" || status === "done"}
+            className="app-px-5 app-py-2 app-bg-purple-900 app-text-white app-text-sm app-font-medium app-rounded-full hover:app-bg-purple-800 disabled:app-opacity-50 disabled:app-cursor-not-allowed app-w-fit"
+          >
+            {status === "loading"
+              ? "Checking…"
+              : status === "done"
+                ? "Restored ✓"
+                : "Restore my subscription"}
+          </button>
+          {status === "error" && (
+            <p className="app-text-sm app-text-red-600">{errorMsg}</p>
+          )}
+        </div>
+      )}
+      <PurpleLink text="Go to pricing" link={"/pricing"} />
+    </div>
+  );
+};
+
 const Success = () => {
   const { refreshAuth, loading, user } = useAuth();
 
@@ -201,18 +256,7 @@ const Success = () => {
   };
 
   if (!user.firestoreUser?.mode) {
-    console.warn("[Success] No mode found in firestoreUser. Customer might not be set up correctly.", {
-      hasFirestoreUser: !!user?.firestoreUser,
-      firestoreUser: user?.firestoreUser
-    });
-    return (
-      <div className={"app-flex app-flex-col app-gap-3"}>
-        <div className="app-text-lg app-font-semibold app-max-w-screen-md app-w-full">
-          No subscription found
-        </div>
-        <PurpleLink text="Go to pricing" link={"/pricing"} />
-      </div>
-    );
+    return <NoSubscription user={user} onRestored={refreshAuth} />;
   }
   
   console.log("[Success] Displaying subscription success for mode:", user.firestoreUser.mode);

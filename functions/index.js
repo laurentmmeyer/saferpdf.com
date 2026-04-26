@@ -1,4 +1,4 @@
-import { onRequest } from "firebase-functions/v2/https";
+import { onRequest, onCall, HttpsError } from "firebase-functions/v2/https";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { defineSecret } from "firebase-functions/params";
@@ -140,5 +140,96 @@ export const createCustomerOnCheckoutCompleteV2 = onRequest(
       console.log(`Event details:`, JSON.stringify(event, null, 2));
       res.status(200).send("Unhandled event type");
     }
+  },
+);
+
+// Restore a subscription purchased under a different UID to the caller's account.
+// Conditions:
+//   1. Caller must be authenticated and have a verified email.
+//   2. The email used to search must match the caller's own auth email.
+//   3. The caller must not already have a subscription (no `mode` field).
+//   4. Exactly one customer document must exist whose raw.customer_details.email matches.
+export const restoreSubscription = onCall(
+  { cors: true },
+  async (request) => {
+    const auth = request.auth;
+
+    if (!auth) {
+      throw new HttpsError("unauthenticated", "Must be signed in.");
+    }
+
+    const callerEmail = auth.token.email;
+    if (!callerEmail) {
+      throw new HttpsError(
+        "failed-precondition",
+        "Account has no verified email. Sign in with Google or email link first.",
+      );
+    }
+
+    const callerUid = auth.uid;
+
+    // Check the caller doesn't already have a subscription.
+    const callerDoc = await db.collection("customers").doc(callerUid).get();
+    if (callerDoc.exists && callerDoc.data()?.mode) {
+      throw new HttpsError(
+        "already-exists",
+        "This account already has an active subscription.",
+      );
+    }
+
+    // Find a customer record whose purchase email matches the caller's email.
+    const snapshot = await db
+      .collection("customers")
+      .where("raw.customer_details.email", "==", callerEmail)
+      .limit(2)
+      .get();
+
+    if (snapshot.empty) {
+      throw new HttpsError(
+        "not-found",
+        "No subscription found for this email address.",
+      );
+    }
+
+    // Reject ambiguous cases — should never happen with a valid Stripe setup.
+    if (snapshot.size > 1) {
+      console.error(`restoreSubscription: multiple records for ${callerEmail}`);
+      throw new HttpsError(
+        "internal",
+        "Multiple records found. Please contact support.",
+      );
+    }
+
+    const sourceDoc = snapshot.docs[0];
+
+    // Don't restore a record that is already assigned to another authenticated user.
+    if (sourceDoc.id !== callerUid) {
+      const existingData = sourceDoc.data();
+      if (existingData?.mode) {
+        // The source record belongs to a real paying UID — refuse to move it.
+        throw new HttpsError(
+          "permission-denied",
+          "This subscription is already linked to another account.",
+        );
+      }
+    }
+
+    // Move the subscription data to the caller's document.
+    await db
+      .collection("customers")
+      .doc(callerUid)
+      .set(sourceDoc.data(), { merge: true });
+
+    // If the source UID differs from the caller, wipe the orphaned record
+    // so it can't be claimed again.
+    if (sourceDoc.id !== callerUid) {
+      await db.collection("customers").doc(sourceDoc.id).delete();
+    }
+
+    console.log(
+      `restoreSubscription: moved ${sourceDoc.id} -> ${callerUid} for ${callerEmail}`,
+    );
+
+    return { success: true };
   },
 );
