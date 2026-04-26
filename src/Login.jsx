@@ -87,6 +87,9 @@ const Login = () => {
           We've sent a sign-in link to <strong>{email}</strong>. Click it from
           this device to finish signing in.
         </p>
+        <p className="app-text-sm app-text-gray-500">
+          Don't see it? Please check your spam folder.
+        </p>
       </div>
     );
   }
