@@ -202,29 +202,20 @@ export const restoreSubscription = onCall(
 
     const sourceDoc = snapshot.docs[0];
 
-    // Don't restore a record that is already assigned to another authenticated user.
-    if (sourceDoc.id !== callerUid) {
-      const existingData = sourceDoc.data();
-      if (existingData?.mode) {
-        // The source record belongs to a real paying UID — refuse to move it.
-        throw new HttpsError(
-          "permission-denied",
-          "This subscription is already linked to another account.",
-        );
-      }
+    // If the subscription is already on this UID, nothing to do.
+    if (sourceDoc.id === callerUid) {
+      return { success: true };
     }
 
-    // Move the subscription data to the caller's document.
+    // The purchase email matches the caller's verified auth email — they are
+    // the rightful owner regardless of which UID currently holds the record.
+    // Move it to the caller's UID and delete the old record.
     await db
       .collection("customers")
       .doc(callerUid)
       .set(sourceDoc.data(), { merge: true });
 
-    // If the source UID differs from the caller, wipe the orphaned record
-    // so it can't be claimed again.
-    if (sourceDoc.id !== callerUid) {
-      await db.collection("customers").doc(sourceDoc.id).delete();
-    }
+    await db.collection("customers").doc(sourceDoc.id).delete();
 
     console.log(
       `restoreSubscription: moved ${sourceDoc.id} -> ${callerUid} for ${callerEmail}`,
